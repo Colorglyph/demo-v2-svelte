@@ -5,7 +5,12 @@ import adapter from '@sveltejs/adapter-static';
 const config = {
 	preprocess: preprocess(),
 	kit: {
-		adapter: adapter(),
+		adapter: adapter({
+      // pages: 'build',
+      // assets: 'build',
+      fallback: 'index.html',
+      // precompress: false
+    }),
 		prerender: {
 			default: true
 		}
