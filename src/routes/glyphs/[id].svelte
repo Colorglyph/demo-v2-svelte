@@ -14,6 +14,7 @@
 
   const id = $page.params.id;
 
+  $: glyph = {}
   $: userBuyOffers = [];
   $: userSellOffers = [];
   $: buyNowOffers = [];
@@ -26,6 +27,14 @@
     userSellOffers = [];
     buyNowOffers = [];
     sellNowOffers = [];
+
+    fetch(`https://api.kalepail.com/sep39/${id}?network=testnet&name=json`)
+    .then(handleResponse)
+    .then((res) => {
+      glyph = { id }
+      res.forEach(({key, value}) => glyph[key] = value)
+      glyph = glyph
+    })
 
     fetch(`${baseUrl}/proxy/offers?selling=${id}`)
       .then(handleResponse)
@@ -102,6 +111,10 @@
       src="https://api.kalepail.com/sep39/{id}?network=testnet"
       class="w-full h-full rendering-pixelated"
     />
+  </div>
+  <div class="ml-4">
+    <h1>{glyph.name}</h1>
+    <p class="text-xs">{glyph.description}</p>
   </div>
 </div>
 
