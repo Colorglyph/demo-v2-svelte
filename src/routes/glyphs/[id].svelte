@@ -5,7 +5,7 @@
   import { uniqBy } from "lodash-es";
   import { onMount } from "svelte";
 
-  import { compressAccount, handleResponse } from "../../@js/utils";
+  import { baseUrl, compressAccount, handleResponse } from "../../@js/utils";
   import {
     userAccount,
     userAccountLoaded,
@@ -27,7 +27,7 @@
     buyNowOffers = [];
     sellNowOffers = [];
 
-    fetch(`http://localhost:8787/proxy/offers?selling=${id}`)
+    fetch(`${baseUrl}/proxy/offers?selling=${id}`)
       .then(handleResponse)
       .then((res) => {
         // Any buy it now offers (if you're not the seller)
@@ -40,7 +40,7 @@
     userAccountLoaded.subscribe((account) => {
       if (!account?.balances) return;
 
-      fetch(`http://localhost:8787/proxy/offers?buying=${id}`)
+      fetch(`${baseUrl}/proxy/offers?buying=${id}`)
         .then(handleResponse)
         .then((res) => {
           // Your glyph<>glyph buy offers
@@ -62,7 +62,7 @@
           sellNowOffers = uniqBy(sellNowOffers, "id");
         });
 
-      fetch(`http://localhost:8787/proxy/claimable-balances?id=${id}`)
+      fetch(`${baseUrl}/proxy/claimable-balances?id=${id}`)
         .then(handleResponse)
         .then((res) => {
           // Your glyph<>?? buy offers

@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js'
 import { userAccountLoaded, userAccount, userRefresh } from '../@state/user'
 import { userSellOffers, userBuySellOffers, userSellOffersRefresh } from '../@state/user-sell-offers'
 import { userBuyOffers, userBuyOffersRefresh } from '../@state/user-buy-offers'
-import { compressAccount, handleResponse } from '../@js/utils';
+import { baseUrl, compressAccount, handleResponse } from '../@js/utils';
 import { uniqBy } from 'lodash-es';
 
 const FEE_PK = 'GBISA2O4573KH6MW5TEUTF3E4MCIZLNHHUN6Y73XXAK4EV45OVKMH352'
@@ -32,14 +32,14 @@ onMount(() => {
 
       balance = Object.assign(balance, {offers: []})
 
-      fetch(`http://localhost:8787/proxy/claimable-balances?id=${asset_issuer}`) // Sell it now Glyph to X
+      fetch(`${baseUrl}/proxy/claimable-balances?id=${asset_issuer}`) // Sell it now Glyph to X
       .then(handleResponse)
       .then((res) => {
         balance.offers.push(...res)
         ownedGlyphs = ownedGlyphs
       })
 
-      fetch(`http://localhost:8787/proxy/offers?buying=${asset_issuer}`) // Sell it now Glyph to Glyph
+      fetch(`${baseUrl}/proxy/offers?buying=${asset_issuer}`) // Sell it now Glyph to Glyph
       .then(handleResponse)
       .then((res) => {
         balance.offers.push(...res)

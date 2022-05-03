@@ -1,7 +1,7 @@
 import { groupBy } from 'lodash-es'
 import { writable } from 'svelte/store'
 
-import { handleResponse } from '../@js/utils'
+import { baseUrl, handleResponse } from '../@js/utils'
 
 export const userSellOffers = writable([]);
 export const userBuySellOffers = writable([]);
@@ -10,7 +10,7 @@ export function userSellOffersRefresh(seller) {
   userSellOffers.set([])
   userBuySellOffers.set([])
 
-  fetch(`http://localhost:8787/proxy/offers?seller=${seller}`)
+  fetch(`${baseUrl}/proxy/offers?seller=${seller}`)
   .then(handleResponse)
   .then((res) => {
     userBuySellOffers.set(
