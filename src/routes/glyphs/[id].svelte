@@ -1,111 +1,107 @@
 <script>
-  import { page } from "$app/stores";
+import { page } from "$app/stores";
 
-  import BigNumber from "bignumber.js";
-  import { uniqBy } from "lodash-es";
-  import { onMount } from "svelte";
+import BigNumber from "bignumber.js";
+import { uniqBy } from "lodash-es";
+import { onMount } from "svelte";
 
-  import { baseUrl, compressAccount, handleResponse } from "../../@js/utils";
-  import {
-    userAccount,
-    userAccountLoaded,
-    userRefresh,
-  } from "../../@state/user";
+import { baseUrl, compressAccount, handleResponse } from "../../@js/utils";
+import {
+  userAccount,
+  userAccountLoaded,
+  userRefresh,
+} from "../../@state/user";
 
-  const id = $page.params.id;
+const id = $page.params.id;
 
-  $: glyph = {}
-  $: userBuyOffers = [];
-  $: userSellOffers = [];
-  $: buyNowOffers = [];
-  $: sellNowOffers = [];
+$: glyph = {}
+$: userBuyOffers = [];
+$: userSellOffers = [];
+$: buyNowOffers = [];
+$: sellNowOffers = [];
 
-  onMount(() => {
-    userRefresh($userAccount);
+onMount(() => {
+  userRefresh($userAccount);
 
-    userBuyOffers = [];
-    userSellOffers = [];
-    buyNowOffers = [];
-    sellNowOffers = [];
+  userBuyOffers = [];
+  userSellOffers = [];
+  buyNowOffers = [];
+  sellNowOffers = [];
 
-    fetch(`https://api.kalepail.com/sep39/${id}?network=testnet&name=json`)
+  fetch(`https://api.kalepail.com/sep39/${id}?network=testnet&name=json`)
+  .then(handleResponse)
+  .then((res) => {
+    glyph = { id }
+    res.forEach(({key, value}) => glyph[key] = value)
+    glyph = glyph
+  })
+
+  fetch(`${baseUrl}/proxy/offers?selling=${id}`)
     .then(handleResponse)
     .then((res) => {
-      glyph = { id }
-      res.forEach(({key, value}) => glyph[key] = value)
-      glyph = glyph
-    })
+      // Any buy it now offers (if you're not the seller)
+      buyNowOffers = res.filter(({ seller }) => seller !== $userAccount);
 
-    fetch(`${baseUrl}/proxy/offers?selling=${id}`)
+      // Your sell offers (if you're the owner)
+      userSellOffers = res.filter(({ seller }) => seller === $userAccount);
+    });
+
+  userAccountLoaded.subscribe((account) => {
+    if (!account?.balances) return;
+
+    fetch(`${baseUrl}/proxy/offers?buying=${id}`)
       .then(handleResponse)
       .then((res) => {
-        // Any buy it now offers (if you're not the seller)
-        buyNowOffers = res.filter(({ seller }) => seller !== $userAccount);
+        // Your glyph<>glyph buy offers
+        userBuyOffers.push(
+          ...res.filter(({ seller }) => seller === $userAccount)
+        );
+        userBuyOffers = uniqBy(userBuyOffers, "id");
 
-        // Your sell offers (if you're the owner)
-        userSellOffers = res.filter(({ seller }) => seller === $userAccount);
+        // Any sell it now offers (If you're the owner)
+        sellNowOffers.push(
+          ...res.filter(({ buying }) =>
+            account.balances.find(
+              ({ asset_issuer, balance }) =>
+                asset_issuer === buying.asset_issuer &&
+                new BigNumber(balance).isGreaterThan(0)
+            )
+          )
+        );
+        sellNowOffers = uniqBy(sellNowOffers, "id");
       });
 
-    userAccountLoaded.subscribe((account) => {
-      if (!account?.balances) return;
+    fetch(`${baseUrl}/proxy/claimable-balances?id=${id}`)
+      .then(handleResponse)
+      .then((res) => {
+        // Your glyph<>?? buy offers
+        userBuyOffers.push(
+          ...res.filter(({ claimants }) =>
+            claimants.find(({ destination }) => destination === $userAccount)
+          )
+        );
+        userBuyOffers = uniqBy(userBuyOffers, "id");
 
-      fetch(`${baseUrl}/proxy/offers?buying=${id}`)
-        .then(handleResponse)
-        .then((res) => {
-          // Your glyph<>glyph buy offers
-          userBuyOffers.push(
-            ...res.filter(({ seller }) => seller === $userAccount)
-          );
-          userBuyOffers = uniqBy(userBuyOffers, "id");
-
-          // Any sell it now offers (If you're the owner)
-          sellNowOffers.push(
-            ...res.filter(({ buying }) =>
+        // Any sell it now offers (If you're the owner)
+        sellNowOffers.push(
+          ...res.filter(({ claimants }) =>
+            claimants.find(({ destination }) =>
               account.balances.find(
                 ({ asset_issuer, balance }) =>
-                  asset_issuer === buying.asset_issuer &&
+                  asset_issuer === destination &&
                   new BigNumber(balance).isGreaterThan(0)
               )
             )
-          );
-          sellNowOffers = uniqBy(sellNowOffers, "id");
-        });
-
-      fetch(`${baseUrl}/proxy/claimable-balances?id=${id}`)
-        .then(handleResponse)
-        .then((res) => {
-          // Your glyph<>?? buy offers
-          userBuyOffers.push(
-            ...res.filter(({ claimants }) =>
-              claimants.find(({ destination }) => destination === $userAccount)
-            )
-          );
-          userBuyOffers = uniqBy(userBuyOffers, "id");
-
-          // Any sell it now offers (If you're the owner)
-          sellNowOffers.push(
-            ...res.filter(({ claimants }) =>
-              claimants.find(({ destination }) =>
-                account.balances.find(
-                  ({ asset_issuer, balance }) =>
-                    asset_issuer === destination &&
-                    new BigNumber(balance).isGreaterThan(0)
-                )
-              )
-            )
-          );
-          sellNowOffers = uniqBy(sellNowOffers, "id");
-        });
-    });
+          )
+        );
+        sellNowOffers = uniqBy(sellNowOffers, "id");
+      });
   });
-
-  function goBack() {
-    history.back();
-  }
+});
 </script>
 
 <div class="flex">
-  <a href="/" on:click={goBack} class="underline">Go Back</a>
+  <a href="/" on:click={() => history.go(-1)} class="underline">Go Back</a>
   <div class="ml-4 w-96 h-96 border border-gray-200">
     <img
       src="https://api.kalepail.com/sep39/{id}?network=testnet"
