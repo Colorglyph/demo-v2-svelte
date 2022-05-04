@@ -1,12 +1,33 @@
-export const isDev = typeof window === 'undefined' ? true : window.location.origin.indexOf('locahost') > -1
-export const baseUrl = isDev ? 'http://localhost:8787' : 'https://colorglyph-v2-wrangler.tyler.workers.dev'
+let isDev
+let baseUrl
+let horizon
+let server
 
-export function handleResponse(res) {
-  if (res.ok)
-    return res.json()
-  throw res
+if (typeof window !== 'undefined') {
+  const { Server } = window.StellarSdk
+
+  isDev = typeof window === 'undefined' ? true : window.location.origin.indexOf('locahost') > -1
+  baseUrl = isDev ? 'http://localhost:8787' : 'https://colorglyph-v2-wrangler.tyler.workers.dev'
+
+  horizon = 'https://horizon-testnet.stellar.org'
+  server = new Server(horizon)  
 }
 
-export function compressAccount(account) {
+async function handleResponse(res) {
+  if (res.ok)
+    return res.json()
+  throw await res.json()
+}
+
+function compressAccount(account) {
   return `${account.substring(0, 4)}...${account.slice(-4)}`
+}
+
+export {
+  isDev,
+  baseUrl,
+  horizon,
+  server,
+  handleResponse,
+  compressAccount
 }
