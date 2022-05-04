@@ -1,6 +1,6 @@
 import { browser } from '$app/env';
 import { writable } from 'svelte/store'
-import { server, handleResponse } from '../@js/utils'
+import { server, handleResponse, baseUrl } from '../@js/utils'
 
 export const userAccountLoaded = writable(null);
 export const userAccount = writable(null);
@@ -19,7 +19,7 @@ if (browser) {
 }
 
 export function userRefresh(id) {
-  fetch(`http://localhost:8787/proxy/account?id=${id}`)
+  fetch(`${baseUrl}/proxy/account?id=${id}`)
   .then(handleResponse)
   .then((res) => userAccountLoaded.set(res))
   .catch((err) => {

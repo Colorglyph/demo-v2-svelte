@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { uniqBy } from 'lodash-es';
 import { onMount } from 'svelte'
 
-import { handleResponse } from '../../@js/utils';
+import { baseUrl, handleResponse } from '../../@js/utils';
 import { userAccount } from '../../@state/user';
 
 const id = $page.params.id
@@ -13,7 +13,7 @@ $: account = {}
 $: ownedGlyphs = []
 
 onMount(() => {
-  fetch(`http://localhost:8787/proxy/account?id=${id}`)
+  fetch(`${baseUrl}/proxy/account?id=${id}`)
   .then(handleResponse)
   .then((res) => {
     account = res
