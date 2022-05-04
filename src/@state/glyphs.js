@@ -1,3 +1,4 @@
+import { uniqBy } from 'lodash-es';
 import { writable } from 'svelte/store'
 
 import { baseUrl, handleResponse } from '../@js/utils'
@@ -5,8 +6,6 @@ import { baseUrl, handleResponse } from '../@js/utils'
 export const glyphs = writable([]);
 
 export function glyphsRefresh() {
-  glyphs.set([])
-  
   fetch(`${baseUrl}/proxy/glyphs`)
   .then(handleResponse)
   .then((res) => res.forEach(({id}) =>
@@ -17,7 +16,7 @@ export function glyphsRefresh() {
 
       res.forEach(({key, value}) => glyph[key] = value)
 
-      glyphs.update((glyphs) => [...glyphs, glyph])
+      glyphs.update((glyphs) => uniqBy([...glyphs, glyph], 'id'))
     })
   ))
 }

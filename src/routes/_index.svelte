@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte'
   import BigNumber from 'bignumber.js'
+  import { Keypair } from 'stellar-sdk'
 
   const FEE_PK = 'GBISA2O4573KH6MW5TEUTF3E4MCIZLNHHUN6Y73XXAK4EV45OVKMH352'
 
@@ -17,8 +18,6 @@
   $: mintableGlyphs = []
 
   onMount(async () => {
-    const { Keypair } = StellarSdk
-    
     const userKeypair = Keypair.fromSecret(localStorage.getItem('secret'))
     const userPublicKey = userKeypair.publicKey()
 

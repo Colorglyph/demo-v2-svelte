@@ -1,14 +1,12 @@
-let isDev
+import { dev, browser } from '$app/env';
+import { Server } from 'stellar-sdk'
+
 let baseUrl
 let horizon
 let server
 
-if (typeof window !== 'undefined') {
-  const { Server } = window.StellarSdk
-
-  isDev = typeof window === 'undefined' ? true : window.location.origin.indexOf('locahost') > -1
-  baseUrl = isDev ? 'http://localhost:8787' : 'https://colorglyph-v2-wrangler.tyler.workers.dev'
-
+if (browser) {
+  baseUrl = dev ? 'http://localhost:8787' : 'https://colorglyph-v2-wrangler.tyler.workers.dev'
   horizon = 'https://horizon-testnet.stellar.org'
   server = new Server(horizon)  
 }
@@ -24,7 +22,6 @@ function compressAccount(account) {
 }
 
 export {
-  isDev,
   baseUrl,
   horizon,
   server,

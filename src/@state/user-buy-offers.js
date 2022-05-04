@@ -6,8 +6,6 @@ import { baseUrl, handleResponse } from '../@js/utils'
 export const userBuyOffers = writable([]);
 
 export function userBuyOffersRefresh(id, FEE_PK) {
-  userBuyOffers.set([])
-
   fetch(`${baseUrl}/proxy/claimable-balances?id=${id}`)
   .then(handleResponse)
   .then((res) =>

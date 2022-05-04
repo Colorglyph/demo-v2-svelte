@@ -1,13 +1,13 @@
 import { browser } from '$app/env';
 import { writable } from 'svelte/store'
+import { Keypair } from 'stellar-sdk'
+
 import { server, handleResponse, baseUrl } from '../@js/utils'
 
 export const userAccountLoaded = writable(null);
 export const userAccount = writable(null);
 
 if (browser) {
-  const { Keypair } = StellarSdk
-
   const userSecret = localStorage.getItem('secret') || (() => {
     const secret = Keypair.random().secret()
     localStorage.setItem('secret', secret)

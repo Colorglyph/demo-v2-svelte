@@ -2,10 +2,9 @@
 import { onMount } from 'svelte';
 
 import { glyphs, glyphsRefresh } from '../@state/glyphs'
-import { userAccount } from '../@state/user'
 
 onMount(() => {
-  glyphsRefresh($userAccount)
+  glyphsRefresh()
 })
 </script>
 

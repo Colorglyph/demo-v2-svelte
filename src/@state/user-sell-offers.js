@@ -7,9 +7,6 @@ export const userSellOffers = writable([]);
 export const userBuySellOffers = writable([]);
 
 export function userSellOffersRefresh(seller) {
-  userSellOffers.set([])
-  userBuySellOffers.set([])
-
   fetch(`${baseUrl}/proxy/offers?seller=${seller}`)
   .then(handleResponse)
   .then((res) => {
