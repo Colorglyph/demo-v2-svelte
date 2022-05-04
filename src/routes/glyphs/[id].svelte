@@ -100,8 +100,8 @@ onMount(() => {
 });
 </script>
 
-<div class="flex">
-  <a href="/" on:click={() => history.go(-1)} class="underline">Go Back</a>
+<div class="flex items-start">
+  <button on:click={() => history.back()} class="underline">Go Back</button>
   <div class="ml-4 w-96 h-96 border border-gray-200">
     <img
       src="https://api.kalepail.com/sep39/{id}?network=testnet"
