@@ -61,12 +61,13 @@ function processBuyOffers(offers) {
   offers.forEach(([key, offers]) => {
     const index = buyOffers.findIndex(([k]) => key === k)
 
-    if (index > -1)
+    if (index > -1) {
       buyOffers[index][1].push(...offers)
-    else
+      buyOffers[index][1] = uniqBy(buyOffers[index][1], 'id')
+    } else {
       buyOffers.push([key, offers])
-
-    buyOffers = buyOffers
+      buyOffers[0][1] = uniqBy(buyOffers[0][1], 'id')
+    }
   })
 
   buyOffers = uniqBy(buyOffers, ([key]) => key)
