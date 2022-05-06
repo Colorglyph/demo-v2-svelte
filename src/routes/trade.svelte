@@ -133,7 +133,7 @@ function processBuyOffers(offers) {
                   && offer.selling.asset_code === 'COLORGLYPH'
                   ? `<img src='https://api.kalepail.com/sep39/${offer.buying.asset_issuer}?network=testnet' class="mx-2 rendering-pixelated">`
                   : `${offer.price * offer.amount} ${
-                      offer.buying.asset_type === 'native' 
+                      offer.buying.asset_type === 'native'
                       ? 'XLM'
                       : `${offer.buying.asset_code}:${compressAccount(offer.buying.asset_issuer)}`
                     }`
