@@ -13,7 +13,7 @@ $: account = {}
 $: ownedGlyphs = []
 
 onMount(() => {
-  fetch(`${baseUrl}/proxy/account?id=${id}`)
+  fetch(`${baseUrl}/proxy/accounts?id=${id}`)
   .then(handleResponse)
   .then((res) => {
     account = res

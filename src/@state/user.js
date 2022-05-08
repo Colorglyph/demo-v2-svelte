@@ -19,7 +19,7 @@ if (browser) {
 }
 
 export function userRefresh(id) {
-  fetch(`${baseUrl}/proxy/account?id=${id}`)
+  fetch(`${baseUrl}/proxy/accounts?id=${id}`)
   .then(handleResponse)
   .then((res) => userAccountLoaded.set(res))
   .catch((err) => {

@@ -8,15 +8,13 @@ import { userBuyOffers, userBuyOffersRefresh } from '../@state/user-buy-offers'
 import { baseUrl, compressAccount, handleResponse } from '../@js/utils';
 import { uniqBy } from 'lodash-es';
 
-const FEE_PK = 'GBISA2O4573KH6MW5TEUTF3E4MCIZLNHHUN6Y73XXAK4EV45OVKMH352'
-
 $: ownedGlyphs = []
 $: buyOffers = []
 
 onMount(() => {
   userRefresh($userAccount)
   userSellOffersRefresh($userAccount)
-  userBuyOffersRefresh($userAccount, FEE_PK)
+  userBuyOffersRefresh($userAccount)
 
   userAccountLoaded.subscribe((account) => {
     if (!account?.balances)
