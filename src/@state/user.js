@@ -19,12 +19,10 @@ if (browser) {
 }
 
 export function userRefresh(id) {
-  fetch(`${baseUrl}/proxy/accounts?id=${id}`)
+  fetch(`${baseUrl}/proxy/account?id=${id}`)
   .then(handleResponse)
   .then((res) => userAccountLoaded.set(res))
   .catch((err) => {
-    console.log(err.status)
-
     if (err.status === 404)
       return server
       .friendbot(id)
