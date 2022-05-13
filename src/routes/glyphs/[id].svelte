@@ -31,7 +31,13 @@ onMount(() => {
       glyph = res
       userBuyOffers = res.offers.buy.filter(({ seller }) => seller === $userAccount) 
       userSellOffers = res.offers.sell.filter(({ seller }) => seller === $userAccount) 
-      buyNowOffers = res.offers.sell.filter(({ seller }) => seller !== $userAccount)
+      buyNowOffers = res.offers.sell.filter(({ buying }) =>
+        account.balances.find(
+          ({ asset_issuer, balance }) =>
+            asset_issuer === buying.asset_issuer &&
+            new BigNumber(balance).isGreaterThan(0)
+        )
+      )
       sellNowOffers = res.offers.buy.filter(({ buying }) =>
         account.balances.find(
           ({ asset_issuer, balance }) =>
