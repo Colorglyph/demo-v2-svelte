@@ -7,7 +7,7 @@ import { userAccount } from '../../@state/user';
 
 const id = $page.params.id
 
-$: account = {}
+$: account = null
 $: accountGlyphs = []
 
 onMount(() => {
@@ -24,10 +24,13 @@ onMount(() => {
 </script>
 
 <div class="py-4">
-  {#if accountGlyphs.length}
   <h1>Glyphs owned by {id === $userAccount ? 'you' : id}</h1>
+
+  {#if account}
   <p>{account.balances.find(({asset_type}) => asset_type === 'native').balance} XLM</p>
+  {/if}
   
+  {#if accountGlyphs.length}
   <div class="grid gap-x-2 gap-y-2 grid-cols-6">
     {#each accountGlyphs as { asset_code, asset_issuer, image, name, description } (`${asset_code}:${asset_issuer}`)}
       <div>
