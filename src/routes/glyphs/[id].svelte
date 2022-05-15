@@ -4,9 +4,12 @@ import { page } from "$app/stores";
 import BigNumber from "bignumber.js";
 import { onMount } from "svelte";
 
+import apiTrade from '../../@actions/trade'
+import apiDeleteOffer from '../../@actions/delete-offer'
 import { baseUrl, compressAccount, handleResponse } from "../../@js/utils";
 import {
   userAccount,
+  userKeypair,
   userAccountLoaded,
   userRefresh,
 } from "../../@state/user";
@@ -46,8 +49,25 @@ onMount(() => {
         )
       )
     })
-  });
-});
+  })
+})
+
+function trade() {
+  return apiTrade({
+    user: $userAccount,
+    keypair: $userKeypair,
+    issuer: id,
+    side: 'buy',
+    price: 100,
+  })
+}
+function deleteOffer(offer) {
+  return apiDeleteOffer({
+    offer, 
+    account: $userAccountLoaded,
+    keypair: $userKeypair
+  })
+}
 </script>
 
 {#if glyph.image}
@@ -65,6 +85,16 @@ onMount(() => {
   </div>
 </div>
 {/if}
+
+<ul>
+  <li>
+    <button
+      on:click="{trade}"
+      type="button"
+      class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
+    >Buy</button>
+  </li>
+</ul>
 
 {#if buyNowOffers.length}
   <h1>Buy it now</h1>
@@ -120,6 +150,7 @@ onMount(() => {
     {#each userBuyOffers as offer (offer.id)}
       <li>
         <button
+          on:click="{deleteOffer(offer)}"
           type="button"
           class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
         >
@@ -145,6 +176,7 @@ onMount(() => {
     {#each userSellOffers as offer (offer.id)}
       <li>
         <button
+          on:click="{deleteOffer(offer)}"
           type="button"
           class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
         >

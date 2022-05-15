@@ -6,6 +6,7 @@ import { server, handleResponse, baseUrl } from '../@js/utils'
 
 export const userAccountLoaded = writable(null);
 export const userAccount = writable(null);
+export const userKeypair = writable(null);
 
 if (browser) {
   const userSecret = localStorage.getItem('secret') || (() => {
@@ -13,9 +14,10 @@ if (browser) {
     localStorage.setItem('secret', secret)
     return secret
   })()
-  const userKeypair = Keypair.fromSecret(userSecret)
+  const keypair = Keypair.fromSecret(userSecret)
 
-  userAccount.set(userKeypair.publicKey())
+  userKeypair.set(keypair)
+  userAccount.set(keypair.publicKey())
 }
 
 export function userRefresh(id) {
